@@ -13,6 +13,24 @@ per-file diff commands.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Every workflow spec invokes Python as `python3`, with a single Windows note at first use**
+  (#669, `.claude/commands/apply.md`, `.claude/commands/rank.md`,
+  `.claude/skills/job-scraper/SKILL.md`,
+  `.claude/skills/job-application-assistant/09-web-research.md`,
+  `tests/test_python_command_specs.py`) - the specs split between spellings:
+  `/apply` ran bare `python salary_lookup.py` / `python tools/verify_*.py`
+  while `/rank`, `/scrape` and `09-web-research` ran `python3 ...`. Neither
+  literal is safe everywhere - on a stock Windows python.org install `python3`
+  is the Microsoft Store App execution alias and exits 49 with no output in a
+  non-interactive shell, while a distro without `python-is-python3` has no bare
+  `python`. Every command line now reads `python3`, each spec carries one
+  Windows note at its first use pointing at the `python` fallback that
+  `.claude/settings.json` already allows (so no settings or guard change), and
+  `tests/test_python_command_specs.py` fails if a spec reintroduces a bare
+  spelling or a second note.
+
 ## [1.7.3] - 2026-10-19
 
 ### Added
