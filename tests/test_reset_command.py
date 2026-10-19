@@ -28,16 +28,20 @@ tree, the profile files from /setup Step 3's own headings - so a new drop
 folder or a new /setup target fails this test until /reset covers it.
 """
 import re
-import shutil
 import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+try:
+    from tests._bash import find_bash
+except ImportError:  # unittest discover -s tests imports modules top-level
+    from _bash import find_bash
+
 REPO = Path(__file__).resolve().parent.parent
 RESET = REPO / ".claude" / "commands" / "reset.md"
 SETUP = REPO / ".claude" / "commands" / "setup.md"
-BASH = shutil.which("bash")
+BASH = find_bash()
 
 
 def tracked_document_subfolders():
