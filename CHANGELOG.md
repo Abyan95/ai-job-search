@@ -18,18 +18,24 @@ per-file diff commands.
 - **Every workflow spec invokes Python as `python3`, with a single Windows note at first use**
   (#669, `.claude/commands/apply.md`, `.claude/commands/rank.md`,
   `.claude/skills/job-scraper/SKILL.md`,
-  `.claude/skills/job-application-assistant/09-web-research.md`,
+  `.claude/skills/job-application-assistant/04-job-evaluation.md`,
+  `.claude/skills/job-application-assistant/05-cv-templates.md`,
+  `.claude/skills/job-application-assistant/09-web-research.md`, `CLAUDE.md`,
   `tests/test_python_command_specs.py`) - the specs split between spellings:
-  `/apply` ran bare `python salary_lookup.py` / `python tools/verify_*.py`
-  while `/rank`, `/scrape` and `09-web-research` ran `python3 ...`. Neither
-  literal is safe everywhere - on a stock Windows python.org install `python3`
-  is the Microsoft Store App execution alias and exits 49 with no output in a
-  non-interactive shell, while a distro without `python-is-python3` has no bare
-  `python`. Every command line now reads `python3`, each spec carries one
-  Windows note at its first use pointing at the `python` fallback that
-  `.claude/settings.json` already allows (so no settings or guard change), and
-  `tests/test_python_command_specs.py` fails if a spec reintroduces a bare
-  spelling or a second note.
+  `/apply` and the skill files it reads (`04-job-evaluation`, `05-cv-templates`)
+  plus `CLAUDE.md` ran bare `python salary_lookup.py` / `python tools/verify_*.py`
+  while `/rank`, `/scrape` and `09-web-research` ran `python3 ...`, so one
+  `/apply` run saw both spellings for the same commands. Every command now reads
+  `python3`, and each spec that runs a tool carries one Windows note at its
+  first use: run the tools as `python` there, because a python.org install
+  ships no `python3` and that name reaches the Microsoft Store alias, which
+  either exits 49 with no output or starts a separate Store Python without the
+  packages `pip` installed (such as pypdf). `.claude/settings.json` already
+  allows both spellings, so no settings or guard change.
+  `tests/test_python_command_specs.py` globs `.claude/commands/*.md`,
+  `.claude/skills/**/*.md` and `.claude/agents/*.md` and fails if any spec
+  runs a bare `python`, or a spec that runs a tool carries no note, a second
+  note, or one after its first command.
 
 ## [1.7.3] - 2026-10-19
 
